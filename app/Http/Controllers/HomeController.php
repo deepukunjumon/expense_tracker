@@ -5,24 +5,30 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 
 class HomeController extends Controller
 {
-    public function __construct()
+    public function index()
     {
-        $this->middleware('auth');
+        $users = User::all();
+        return view('admin.users', compact('users'));
     }
 
-    public function index(Request $request)
+    public function userHome()
     {
-        if (Auth::check()) {
-            $response = response()->view('home');
-            $response->header('Cache-Control', 'no-cache, no-store, must-revalidate');
-            $response->header('Pragma', 'no-cache');
-            $response->header('Expires', '0');
-            return $response;
+        $user = Auth::user();
+        
+        if ($user->is_admin == 1) {
+            return view('admin.dashboard');
+        } else {
+            return redirect()->route('home');
         }
+    }
 
-        return redirect()->route('login');
+    public function listUsers()
+    {
+        $users = User::paginate(10);
+        return view('admin.users', compact('users'));
     }
 } 

@@ -26,7 +26,7 @@ class AuthManager extends Controller
 
         $credentials = $request->only('email', 'password');
         if (Auth::attempt($credentials)) {
-            return redirect()->intended(route('home'));
+            return redirect()->intended(route('dashboard'));
         }
         return redirect(route('login'))->with("Error", "Login Failed!");
     }
@@ -52,9 +52,8 @@ class AuthManager extends Controller
         return redirect(route('login'))->with("Success", "User registration successful!");
     }
 
-    function logout() {
-        Session::flush();
+    function logout(Request $request) {
         Auth::logout();
-        return redirect(route('login'));
+        return redirect('/login'); // Redirect to login page
     }
 }
